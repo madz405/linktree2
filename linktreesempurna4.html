@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AHMAD MULDI</title>
+<style>
+  /* Reset and base */
+  * {
+    margin: 0; padding: 0; box-sizing: border-box;
+  }
+  body, html {
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: white;
+    overflow-y: scroll;
+    background: black;
+    position: relative;
+  }
+
+  /* Full screen background image with dark overlay */
+  body {
+    background-image: url('https://files.catbox.moe/lu58hk.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    position: relative;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    top:0;
+    left:0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.45);
+    z-index: -1;
+  }
+
+  /* Main container, center aligned */
+  .container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 60px 20px 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    min-height: 100vh;
+    backdrop-filter: brightness(1.2);
+  }
+
+  /* Profile photo simple style */
+  .profile-photo {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 4px solid rgba(255,255,255,0.9);
+    object-fit: cover;
+    box-shadow: 0 0 25px rgba(255 255 255 / 0.8);
+    filter: drop-shadow(0 0 5px rgba(255 255 255 / 0.8));
+    user-select: none;
+
+    /* slower fade-in animation */
+    opacity: 0;
+    animation: fadeInUp 1.8s ease forwards 0.8s;
+  }
+
+  /* Bio text with typing animation - multiline centered */
+  .bio {
+    font-size: 1.25rem;
+    font-weight: 600;
+    white-space: normal;
+    max-width: 100%;
+    padding-right: 6px;
+    min-height: 90px;
+    line-height: 1.5;
+    text-shadow:
+      0 0 5px rgba(0,0,0,0.7),
+      0 0 10px rgba(0,0,0,0.7);
+    text-align: center;
+
+    /* Disable fade-in animation */
+    opacity: 1;
+    animation: none;
+  }
+
+  /* blinking caret only while typing */
+  .bio.typing {
+    border-right: 3px solid rgba(255,255,255,0.9);
+    animation: blink-caret 1s step-end infinite;
+  }
+
+  /* Keyframes for blinking cursor */
+  @keyframes blink-caret {
+    0%, 100% { border-color: rgba(255,255,255,0.9);}
+    50% { border-color: transparent; }
+  }
+
+  /* Medium video under bio */
+  .bio-video {
+    width: 320px;
+    max-width: 100%;
+    border-radius: 14px;
+    box-shadow: 0 0 18px rgba(255 255 255 / 0.85);
+    object-fit: cover;
+    opacity: 0;
+    /* fade-in to appear nicely */
+    animation: fadeInUp 1.8s ease forwards 1.5s;
+  }
+
+  /* Fade-in and slide-up for gallery links */
+  @keyframes fadeInSlide {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Slide gallery container */
+  .gallery-container {
+    width: 100%;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none; /* firefox */
+    -ms-overflow-style: none;  /* IE 10+ */
+  }
+  .gallery-container::-webkit-scrollbar {
+    display: none;
+  }
+
+  .gallery {
+    display: flex;
+    gap: 15px;
+    padding-bottom: 10px;
+  }
+  .gallery a {
+    display: inline-block;
+    outline-offset: 2px;
+    outline: none;
+    border-radius: 14px;
+    box-shadow: 0 0 12px rgba(255 255 255 / 0.7);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    opacity: 0;
+    animation: fadeInSlide 1.8s forwards;
+  }
+  .gallery a:focus-visible {
+    outline: 2px solid #00fff9;
+  }
+  .gallery a:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(255 255 255 / 1);
+  }
+  .gallery a:nth-child(1) {
+    animation-delay: 0.7s;
+  }
+  .gallery a:nth-child(2) {
+    animation-delay: 1.0s;
+  }
+  .gallery a:nth-child(3) {
+    animation-delay: 1.3s;
+  }
+  .gallery a:nth-child(4) {
+    animation-delay: 1.6s;
+  }
+  .gallery a:nth-child(5) {
+    animation-delay: 1.9s;
+  }
+  .gallery img {
+    height: 120px;
+    border-radius: 14px;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Link buttons container */
+  .links {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  /* Animations for buttons with slower fade-in */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0; transform: translateY(20px);
+    }
+    to {
+      opacity: 1; transform: translateY(0);
+    }
+  }
+  @keyframes shakeSlow {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(5px); }
+  }
+  @keyframes rgbGradientShift {
+    0% {
+      background-position: 0% 50%;
+      box-shadow: 0 0 12px rgba(255, 0, 0, 0.85);
+    }
+    33% {
+      background-position: 50% 50%;
+      box-shadow: 0 0 12px rgba(0, 255, 0, 0.85);
+    }
+    66% {
+      background-position: 100% 50%;
+      box-shadow: 0 0 12px rgba(0, 0, 255, 0.85);
+    }
+    100% {
+      background-position: 0% 50%;
+      box-shadow: 0 0 12px rgba(255, 0, 0, 0.85);
+    }
+  }
+
+  .btn-link {
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-decoration: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 40px;
+    background: linear-gradient(270deg, rgb(255,0,0), rgb(0,255,0), rgb(0,0,255));
+    background-size: 600% 600%;
+    animation:
+      fadeInUp 1.8s ease forwards var(--delay),
+      shakeSlow 3s ease-in-out infinite var(--delay),
+      rgbGradientShift 8s ease infinite var(--delay);
+    opacity: 0;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.85);
+    animation-fill-mode: forwards;
+    filter: drop-shadow(0 0 4px rgba(255,255,255,0.75));
+    transition: box-shadow 0.3s ease;
+  }
+  .btn-link:hover {
+    box-shadow: 0 0 30px rgba(255, 255, 255, 1);
+    filter: drop-shadow(0 0 8px rgba(255,255,255,1));
+  }
+  /* Adjust spacing for buttons */
+  .btn-link:nth-child(1) { --delay: 1.0s; }
+  .btn-link:nth-child(2) { --delay: 1.3s; }
+  .btn-link:nth-child(3) { --delay: 1.6s; }
+  .btn-link:nth-child(4) { --delay: 1.9s; }
+  .btn-link:nth-child(5) { --delay: 2.2s; }
+
+  .btn-link img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 5px rgba(255 255 255 / 0.8);
+    flex-shrink: 0;
+  }
+
+  .btn-link span {
+    flex-grow: 1;
+    text-align: center;
+  }
+
+  /* Music control button style */
+  #music-control {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(0,0,0,0.6);
+    border-radius: 50%;
+    padding: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 20px white;
+    z-index: 20;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+  }
+  #music-control:hover {
+    background-color: rgba(0,0,0,0.9);
+    box-shadow: 0 0 30px white;
+  }
+  #music-control svg {
+    fill: white;
+    stroke: none;
+    width: 26px;
+    height: 26px;
+    filter: drop-shadow(0 0 6px white);
+    transition: fill 0.3s ease, filter 0.3s ease;
+  }
+
+  /* Music panel below button */
+  #music-panel {
+    position: fixed;
+    top: 70px;
+    right: 20px;
+    width: 280px;
+    background: rgba(0,0,0,0.8);
+    border-radius: 14px;
+    box-shadow: 0 0 30px rgba(255,255,255,0.6);
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-20px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    z-index: 19;
+  }
+  #music-panel.open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+  #music-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  #music-cover {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 0 12px rgba(255 255 255 / 0.8);
+    flex-shrink: 0;
+  }
+  #music-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: white;
+    user-select: none;
+    text-shadow: 0 0 8px rgba(0,0,0,0.9);
+    flex-grow: 1;
+  }
+  #progress-container {
+    margin-top: 10px;
+  }
+  #progress {
+    width: 100%;
+    appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.15);
+    cursor: pointer;
+  }
+  #progress::-webkit-slider-thumb {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #00fff9;
+    border: none;
+    cursor: pointer;
+    margin-top: -5px;
+    transition: background 0.3s ease;
+  }
+  #progress::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #00fff9;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  #progress::-webkit-slider-runnable-track {
+    height: 6px;
+    border-radius: 3px;
+  }
+  #time-display {
+    margin-top: 6px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.75);
+    user-select: none;
+    font-family: monospace, monospace;
+  }
+
+  /* Watermark style */
+  .watermark {
+    position: fixed;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.35);
+    font-weight: 700;
+    pointer-events: none;
+    user-select: none;
+    z-index: 15;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-shadow: 0 0 5px rgba(0,0,0,0.5);
+  }
+</style>
+</head>
+<body>
+
+  <div class="container" aria-label="LinkTree Profile">
+    <!-- Profile photo simple -->
+    <img src="https://files.catbox.moe/trjwxu.jpg" alt="Profile Photo" class="profile-photo" />
+
+    <!-- Bio with typed animation -->
+    <div id="bio" class="bio typing" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- Small video under bio with fade in animation -->
+    <video class="bio-video" autoplay muted loop playsinline src="https://files.catbox.moe/ul2udk.webm" aria-label="Video Content"></video>
+
+    <!-- Sliding photo clips gallery -->
+    <div class="gallery-container" aria-label="Photo gallery">
+      <div class="gallery" tabindex="0">
+      <a href="https://files.catbox.moe/ssolnw.jpg" target="_blank" rel="noopener noreferrer" aria-label="Gallery Photo 1 Link">
+          <img src="https://files.catbox.moe/ssolnw.jpg" alt="Gallery Photo 1" />
+        </a>
+        <a href="https://files.catbox.moe/z9fqhv.jpg" target="_blank" rel="noopener noreferrer" aria-label="Gallery Photo 1 Link">
+          <img src="https://files.catbox.moe/z9fqhv.jpg" alt="Gallery Photo 1" />
+        </a>
+        <a href="https://files.catbox.moe/27qo5l.jpg" target="_blank" rel="noopener noreferrer" aria-label="Gallery Photo 2 Link">
+          <img src="https://files.catbox.moe/27qo5l.jpg" alt="Gallery Photo 2" />
+        </a>
+        <a href="https://files.catbox.moe/xw1n1o.jpg" target="_blank" rel="noopener noreferrer" aria-label="Gallery Photo 3 Link">
+          <img src="https://files.catbox.moe/xw1n1o.jpg" alt="Gallery Photo 3" />
+        </a>
+        <a href="https://files.catbox.moe/e5h0rv.jpg" target="_blank" rel="noopener noreferrer" aria-label="Gallery Photo 4 Link">
+          <img src="https://files.catbox.moe/0t67ea.jpg" alt="Gallery Photo 4" />
+        </a>
+        <a href="https://files.catbox.moe/e5h0rv.jpg" target="_blank" rel="noopener noreferrer" aria-label="Gallery Photo 5 Link">
+          <img src="https://files.catbox.moe/7z5s4f.jpg" alt="Gallery Photo 5" />
+        </a>
+        <a href="https://flappy-birdsbymadz.netlify.app/" target="_blank" rel="noopener noreferrer" aria-label="Gallery Photo 5 Link">
+          <img src="https://files.catbox.moe/x3wwmr.jpg" alt="Gallery Photo 5" />
+        </a>
+      </div>
+    </div>
+
+    <!-- Link buttons with photo avatars and centered text -->
+    <div class="links" aria-label="Link buttons">
+      <a href="https://instagram.com/madzmuldi-" target="_blank" rel="noopener" class="btn-link" style="--delay: 0.3s" aria-label="Twitter">
+        <img src="https://files.catbox.moe/bmdel6.jpg" alt="Twitter logo" />
+        <span>𝙸𝚗𝚜𝚝𝚊𝚐𝚛𝚊𝚖</span>
+      </a>
+      <a href="https://www.facebook.com/share/12Jn48xurYq/" target="_blank" rel="noopener" class="btn-link" style="--delay: 0.6s" aria-label="GitHub">
+        <img src="https://files.catbox.moe/j9de8p.jpg" alt="GitHub logo" />
+        <span>𝙵𝚊𝚌𝚎𝚋𝚘𝚘𝚔</span>
+      </a>
+      <a href="https://t.me/madz1805" target="_blank" rel="noopener" class="btn-link" style="--delay: 0.9s" aria-label="LinkedIn">
+        <img src="https://files.catbox.moe/fanknd.jpg" alt="LinkedIn logo" />
+        <span>𝚃𝚎𝚕𝚎𝚐𝚛𝚊𝚖</span>
+      </a>
+      <a href="https://wa.me/6283188798484" target="_blank" rel="noopener" class="btn-link" style="--delay: 1.2s" aria-label="Instagram">
+        <img src="https://files.catbox.moe/ywukc2.jpg" alt="Instagram logo" />
+        <span>𝚆𝚑𝚊𝚝𝚜𝚊𝚙𝚙</span>
+      </a>
+      <a href="https://wa.me/6285715949271" target="_blank" rel="noopener" class="btn-link" style="--delay: 1.5s" aria-label="YouTube">
+        <img src="https://files.catbox.moe/n663km.jpg" alt="YouTube logo" />
+        <span>𝙺𝚊𝚢𝚗𝚊 𝙰𝙸</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Music control button -->
+  <button id="music-control" aria-label="Toggle Music" title="Play/Pause Music" aria-pressed="false">
+    <svg id="music-icon" viewBox="0 0 24 24" aria-hidden="true" >
+      <!-- Play icon initially -->
+      <polygon id="play-icon" points="8 5 8 19 19 12" fill="white" />
+      <!-- Pause icon initially hidden -->
+      <g id="pause-icon" style="display:none;" fill="white">
+        <rect x="7" y="5" width="4" height="14" />
+        <rect x="13" y="5" width="4" height="14" />
+      </g>
+    </svg>
+  </button>
+
+  <!-- Music info panel -->
+  <div id="music-panel" aria-live="polite" aria-atomic="true" aria-hidden="true" role="region">
+    <div id="music-info">
+      <img id="music-cover" alt="Music Cover" src="https://files.catbox.moe/fhvmqv.jpg" />
+      <div id="music-title">Renegade - Aaryan Shah</div>
+    </div>
+    <div id="progress-container">
+      <input type="range" id="progress" min="0" max="100" value="0" aria-label="Music progress bar" />
+      <div id="time-display" aria-live="off">00:00 / 00:00</div>
+    </div>
+  </div>
+
+  <!-- Background music -->
+  <audio id="background-music" loop preload="auto">
+    <source src="https://files.catbox.moe/d4rd8s.mp3" type="audio/mp3" />
+    Your browser does not support the audio element.
+  </audio>
+
+  <!-- Watermark -->
+  <div class="watermark" aria-hidden="true">©madz all right reserved</div>
+
+  <script>
+    // Typed Text Animation for bio - multiline with line breaks naturally
+    const bioText = "ℎ𝑎𝑙𝑜𝑜 👋, 𝑎𝑘𝑢 𝑚𝑎𝑑𝑧 𝑠𝑒𝑜𝑟𝑎𝑛𝑔 𝑟𝑒𝑚𝑎𝑗𝑎 𝑦𝑎𝑛𝑔 𝑠𝑢𝑘𝑎 𝑏𝑒𝑙𝑎𝑗𝑎𝑟 𝐽𝑎𝑣𝑎𝑆𝑐𝑟𝑖𝑝𝑡, 𝑏𝑒𝑟𝑚𝑎𝑖𝑛 𝑔𝑎𝑚𝑒 𝑑𝑎𝑛 𝑝𝑒𝑛𝑦𝑢𝑘𝑎 𝑘𝑢𝑐𝑖𝑛𝑔😺";
+    const bioEl = document.getElementById('bio');
+
+    let index = 0;
+    function typeBio() {
+      if (index <= bioText.length) {
+        bioEl.textContent = bioText.slice(0, index);
+        if(!bioEl.classList.contains('typing')) {
+          bioEl.classList.add('typing');
+        }
+        index++;
+        setTimeout(typeBio, 50);
+      } else {
+        bioEl.classList.remove('typing');
+      }
+    }
+    typeBio();
+
+    // Music control with play/pause icon toggle & progress bar with time display
+    const musicControlBtn = document.getElementById('music-control');
+    const backgroundMusic = document.getElementById('background-music');
+    const playIcon = document.getElementById('play-icon');
+    const pauseIcon = document.getElementById('pause-icon');
+    const musicPanel = document.getElementById('music-panel');
+    const progress = document.getElementById('progress');
+    const timeDisplay = document.getElementById('time-display');
+
+    let panelOpen = false;
+    let isSeeking = false;
+
+    function updateIcon(isPlaying) {
+      if (isPlaying) {
+        playIcon.style.display = 'none';
+        pauseIcon.style.display = 'block';
+      } else {
+        playIcon.style.display = 'block';
+        pauseIcon.style.display = 'none';
+      }
+    }
+
+    musicControlBtn.addEventListener('click', () => {
+      // Toggle panel visibility
+      panelOpen = !panelOpen;
+      if (panelOpen) {
+        musicPanel.classList.add('open');
+        musicPanel.setAttribute('aria-hidden', 'false');
+        musicControlBtn.setAttribute('aria-pressed', 'true');
+      } else {
+        musicPanel.classList.remove('open');
+        musicPanel.setAttribute('aria-hidden', 'true');
+        musicControlBtn.setAttribute('aria-pressed', 'false');
+      }
+
+      // Toggle play/pause music
+      if (backgroundMusic.paused) {
+        backgroundMusic.play();
+        updateIcon(true);
+      } else {
+        backgroundMusic.pause();
+        updateIcon(false);
+      }
+    });
+
+    // Update progress bar and time display as the audio plays
+    backgroundMusic.addEventListener('timeupdate', () => {
+      if (!isSeeking && backgroundMusic.duration) {
+        const percent = (backgroundMusic.currentTime / backgroundMusic.duration) * 100;
+        progress.value = percent;
+        timeDisplay.textContent = `${formatTime(backgroundMusic.currentTime)} / ${formatTime(backgroundMusic.duration)}`;
+      }
+    });
+
+    // Seek audio on progress bar input
+    progress.addEventListener('input', () => {
+      isSeeking = true;
+      const seekTime = (progress.value / 100) * backgroundMusic.duration;
+      backgroundMusic.currentTime = seekTime;
+      timeDisplay.textContent = `${formatTime(seekTime)} / ${formatTime(backgroundMusic.duration)}`;
+    });
+
+    progress.addEventListener('change', () => {
+      isSeeking = false;
+    });
+
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return mins.toString().padStart(2, '0') + ':' + secs.toString().padStart(2, '0');
+    }
+
+    // Initialize icon on load (paused)
+    updateIcon(false);
+    timeDisplay.textContent = "00:00 / 00:00";
+
+    // Autoplay music (may fail if blocked)
+    window.addEventListener('load', () => {
+      backgroundMusic.volume = 0.2;
+      backgroundMusic.play().then(() => {
+        updateIcon(true);
+        panelOpen = true;
+        musicPanel.classList.add('open');
+        musicPanel.setAttribute('aria-hidden', 'false');
+        musicControlBtn.setAttribute('aria-pressed', 'true');
+      }).catch(() => {
+        // autoplay blocked
+      });
+    });
+  </script>
+</body>
+</html>
